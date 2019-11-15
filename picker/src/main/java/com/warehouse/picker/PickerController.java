@@ -43,7 +43,7 @@ public class PickerController {
     }
 
 
-    @PutMapping("/checkout")
+    @GetMapping("/checkout")
     public String checkoutBarcode(@RequestParam("barcode")  String barcode,
     @RequestParam("userName")  String userName, @RequestParam("userName")  Long orderId){
 
