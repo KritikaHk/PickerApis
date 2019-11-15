@@ -8,6 +8,6 @@ import java.util.List;
 @Repository
 public interface PickerRepository extends CrudRepository<PickerDetailEntity, Integer> {
 
-    PickerDetailEntity findByUserName(String userName);
+    List<PickerDetailEntity> findByUserName(String userName);
 
 }

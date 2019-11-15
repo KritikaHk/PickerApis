@@ -30,13 +30,15 @@ public class PickerController {
 
 
     @GetMapping("/orders")
-    public String[] fetchOrderForUsers(@RequestParam("username")  String userName){
-        PickerDetailEntity pickerDetailEntity = pickerRepository.findByUserName(userName);
-        if(pickerDetailEntity != null){
-            String [] order = (pickerDetailEntity.getOrderId().toString().split(","));
-            return  order;
+    public List<Integer> fetchOrderForUsers(@RequestParam("username")  String userName){
+        List<PickerDetailEntity> pickerDetailEntityList = pickerRepository.findByUserName(userName);
+        List<Integer> orderIds = new ArrayList<>();
+        if(!pickerDetailEntityList.isEmpty()){
+            for(PickerDetailEntity pickerDetailEntity : pickerDetailEntityList){
+                orderIds.add(pickerDetailEntity.getOrderId());
+            }
         }
-        return null;
+        return orderIds;
     }
 
 
