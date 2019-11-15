@@ -18,6 +18,6 @@ public class InventoryForecastController {
   @GetMapping("/forecast")
   private  Long getCountForZoneAndVariant(@RequestParam String zone,@RequestParam String variantId){
 
-    return inventoryForecastCountRepository.count();
+    return inventoryForecastCountRepository.findByVariantIdZone(zone,variantId).getInvCount();
   }
 }
