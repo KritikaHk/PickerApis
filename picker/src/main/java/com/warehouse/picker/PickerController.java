@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -86,8 +83,34 @@ public class PickerController {
     }
 
 
-    @GetMapping("/checkout")
-    public String checkoutBarcode(@RequestParam("barcode") String barcode, @RequestParam("username") String userName) {
+    @GetMapping("/orders/bin")
+    public ApiResponse fetchNutForBin(@RequestParam("username") String userName , @ RequestParam("bin_id") String binbarcode) {
+        List<PickerDetailEntity> pickerDetailEntityList = pickerRepository.findByUserName(userName);
+        List<Long> orderIds = new ArrayList<>();
+        pickerDetailEntityList.forEach(pickerDetailEntity ->
+                orderIds.add(Long.valueOf(pickerDetailEntity.getOrderId())));
+
+        List<PickList> pickLists = pickListRepository.findByBinAndOrderIdIn(binbarcode,orderIds);
+
+        List<VariantQtyDto> variantQtyDtoList = new ArrayList<>();
+        for (PickList pickList : pickLists) {
+            VariantQtyDto variantQtyDto = new VariantQtyDto();
+            variantQtyDto.setQty(pickList.getTotalQuantity());
+            variantQtyDto.setVariantId(pickList.getVariantId());
+            variantQtyDtoList.add(variantQtyDto);
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setMessage(successMessage);
+        apiResponse.setData(variantQtyDtoList);
+        return apiResponse;
+    }
+
+
+
+    @GetMapping("/orders/bin/checkout")
+    public CheckedOutResponseWrapper checkoutBarcode(@RequestParam("barcode") String barcode, @RequestParam("username") String userName, @RequestParam("variantid") String variantId ) {
         NutDetailEntity nutDetailEntity = nutDetailRepository.findByBarcode(barcode);
         if (nutDetailEntity != null) {
             List<PickerDetailEntity> pickerDetailEntityList = pickerRepository.findByUserName(userName);
@@ -96,11 +119,18 @@ public class PickerController {
                 for (PickList pickList : pickLists) {
                     pickList.setTotalQuantity(pickList.getTotalQuantity() - 1);
                     pickListRepository.save(pickList);
-                    return "Checkout Successfully!!";
+                    CheckedOutResponse checkedOutResponse = new CheckedOutResponse();
+                    checkedOutResponse.setOrderId(pickList.getOrderId());
+                    checkedOutResponse.setQty(pickList.getTotalQuantity());
+                    checkedOutResponse.setVariantId(variantId);
+                    checkedOutResponse.setCheckedOutSuccess(true);
+                    CheckedOutResponseWrapper checkedOutResponseWrapper = new CheckedOutResponseWrapper();
+                    checkedOutResponseWrapper.setData(Collections.singletonList(checkedOutResponse));
+                    return  checkedOutResponseWrapper;
                 }
             }
         }
-        return "Something went wrong !!";
+        return new CheckedOutResponseWrapper();
     }
 
 
@@ -200,5 +230,18 @@ public class PickerController {
     @Data
     class LoginApiResponse extends ApiResponse{
         private boolean success;
+    }
+
+    @Data
+    class  CheckedOutResponse{
+        private String variantId;
+        private Long qty;
+        private boolean checkedOutSuccess;
+        private Long orderId;
+    }
+
+    @Data
+    class CheckedOutResponseWrapper {
+        private List<CheckedOutResponse> data;
     }
 }
