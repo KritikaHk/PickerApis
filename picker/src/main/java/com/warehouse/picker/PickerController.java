@@ -22,6 +22,9 @@ public class PickerController {
     @Autowired
     PickerRepository pickerRepository;
 
+    @Autowired
+    PickListRepository pickListRepository;
+
     @GetMapping(value = "/test")
     public String testController() {
         logger.info("Inside test controller");
@@ -43,5 +46,9 @@ public class PickerController {
 
 
 
+    @GetMapping("/picklist")
+    public List<PickList> fetchPickList(@RequestParam("orderid") Long orderId){
+         return pickListRepository.findByOrderId(orderId);
+    }
 
 }
