@@ -12,4 +12,6 @@ public interface PickListRepository extends CrudRepository<PickList,Integer> {
 
     List<PickList> findByOrderIdIn(List<Long> orderId);
 
+    List<PickList> findByBinAndOrderIdIn(String bin, List<Long> orderId);
+
 }

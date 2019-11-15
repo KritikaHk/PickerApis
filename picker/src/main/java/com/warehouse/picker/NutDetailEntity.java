@@ -18,5 +18,5 @@ public class NutDetailEntity {
     private String barcode;
 
     @Column(name = "nut_id")
-    private Integer nutId;
+    private String nutId;
 }
