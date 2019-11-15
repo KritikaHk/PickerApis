@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/inventory/forecast")
+@RequestMapping("/inventory")
 public class InventoryForecastController {
 
   @Autowired
   private InventoryForecastCountRepository inventoryForecastCountRepository;
 
-  @GetMapping
+  @GetMapping("/forecast")
   private  Long getCountForZoneAndVariant(@RequestParam String zone,@RequestParam String variantId){
 
     return inventoryForecastCountRepository.count();
