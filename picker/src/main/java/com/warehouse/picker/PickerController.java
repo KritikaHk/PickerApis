@@ -44,7 +44,13 @@ public class PickerController {
         }
         return orderIds;
     }
-
+    
+    @GetMapping("/authLoin")
+    public boolean authenticateUsers(@RequestParam("username")  String userName){
+        List<PickerDetailEntity> pickerDetailEntityList = pickerRepository.findByUserName(userName);
+        return (!pickerDetailEntityList.isEmpty());
+    }
+    
 
     @GetMapping("/checkout")
     public String checkoutBarcode(@RequestParam("barcode")  String barcode,
@@ -52,7 +58,6 @@ public class PickerController {
 
      return null;
     }
-
 
 
     @GetMapping("/picklist")
