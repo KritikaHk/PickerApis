@@ -131,11 +131,12 @@ public class PickerController {
         }
     }
 
-
     @GetMapping("/picklist")
     public List<PickList> fetchPickList(@RequestParam("orderid") Long orderId) {
         return pickListRepository.findByOrderId(orderId);
     }
+
+
 
     private DtoWrapper fetchOrderDetails(String userName) {
         List<PickerDetailEntity> pickerDetailEntityList = pickerRepository.findByUserName(userName);
